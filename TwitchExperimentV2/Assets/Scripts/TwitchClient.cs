@@ -15,7 +15,7 @@ public class TwitchClient : MonoBehaviour
     {
         Application.runInBackground = true;
 
-        ConnectionCredentials credentials = new ConnectionCredentials('mrtwitchboto', Secrets.Instance.accessToken);
+        ConnectionCredentials credentials = new ConnectionCredentials("mrtwitchboto", Secrets.Instance.accessToken);
         client = new Client();
 
     }
