@@ -1,0 +1,4 @@
+
+Application:
+Client ID - vrd9jxv1kwcz7x5shslac31ob6pjx6
+Secret - diagij48v92mnowq13gci7cl1d1tj7
