@@ -20,13 +20,28 @@ public class TwitchClient : MonoBehaviour
         client.Initialize(credentials, channelName);
 
         client.OnMessageReceived += ChatListen;
+        client.OnChatCommandReceived += CommandListen;
 
         client.Connect();
+    }
+
+    private void CommandListen(object sender, TwitchLib.Client.Events.OnChatCommandReceivedArgs e)
+    {
+        if(e.Command.CommandText == "help")
+        {
+            Help();
+        }
     }
 
     private void ChatListen(object sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)
     {
         Debug.Log("Someone just sent a message in Twitch Chat");
+        Debug.Log(e.ChatMessage.Username + ": " + e.ChatMessage.Message);
+    }
+
+    private void Help()
+    {
+        client.SendMessage(client.JoinedChannels[0], "Welcome to Chasing Chats! You can use chat commands to help the cats avoid the player! The valid commands are: !Up, !Down, !Left, !Right");
     }
 
     // Update is called once per frame
