@@ -19,9 +19,8 @@ public class PlayerController : MonoBehaviour
         float moveVertical = Input.GetAxis("Vertical");
 
         Vector3 movement = new Vector3(moveHorizotal, moveVertical, 0.0f);
-
-        //create Global
         playerRB.velocity = movement * Global.Instance.playerSpeed;
+        //create Global
 
     }
 
