@@ -7,10 +7,12 @@ public class CatMovement : MonoBehaviour
     private Rigidbody rb;
     private float moveHorizontal;
     private float moveVertical;
-
-    void start()
+    private float moveForce;
+    
+    void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = gameObject.GetComponent<Rigidbody>();
+        moveForce = 300.0f;
     }
     
     public void Move(string direction)
@@ -20,26 +22,25 @@ public class CatMovement : MonoBehaviour
         if(direction == "Up" || direction == "up")
         {
             moveHorizontal = 0.0f;
-            moveVertical = 10.0f;
+            moveVertical = moveForce;
         }
         else if (direction == "Down" || direction == "down")
         {
             moveHorizontal = 0.0f;
-            moveVertical = -10.0f;
+            moveVertical = -moveForce;
         }
         else if (direction == "Left" || direction == "left")
         {
-            moveHorizontal = -10.0f;
+            moveHorizontal = -moveForce;
             moveVertical = 0.0f;
         }
         else if (direction == "Right" || direction == "right")
         {
-            moveHorizontal = 10.0f;
+            moveHorizontal = moveForce;
             moveVertical = 0.0f;
         }
 
         Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0.0f);
-        
         rb.AddForce(movement);
     }
 }
