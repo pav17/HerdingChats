@@ -19,4 +19,12 @@ public class CatController : MonoBehaviour
         Debug.Log(cats[r]);
         selectedCat.GetComponent<CatMovement>().Move(direction);
     }
+
+    void OnCollisonEnter(Collision collision)
+    {
+        if (collision.gameObject.Equals("Player"))
+        {
+
+        }
+    }
 }
