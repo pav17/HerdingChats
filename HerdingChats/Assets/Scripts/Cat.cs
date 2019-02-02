@@ -17,8 +17,12 @@ public class Cat : MonoBehaviour
     private float catDriftDirectionChance;
     private string catMoveDirection;
     private Vector3 drift;
+    private Vector3 away;
     private bool evadeFlag;
-    private float localCatEvadeCooldown; 
+    private float localCatEvadeCooldown;
+    private Collider2D[] results;
+    private ContactFilter2D resultsFilter;
+    private LayerMask catMask;
 
 
     void Start()
@@ -30,6 +34,11 @@ public class Cat : MonoBehaviour
         catDriftChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
         drift = Vector3.zero;
+        away = Vector3.zero;
+        results = new Collider2D[5];
+        catMask = gameObject.layer;
+        resultsFilter.SetLayerMask(catMask);
+        //CreateRays();
         DriftDirection();
     }
 
@@ -47,31 +56,29 @@ public class Cat : MonoBehaviour
             }
         }
 
-        if (catDriftTimer >= catDriftChance && evadeFlag == false)
-        {
-            DriftDirection();
-            Debug.Log("Drift direction changed");
-        }
-        
-    }
-
-    void FixedUpdate()
-    {
         if (evadeFlag == true)
         {
             catRB.velocity = Global.Instance.catEvadeSpeed * drift;
+            localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
         }
-        else if(evadeFlag == false)
+        else if (evadeFlag == false)
         {
             catRB.velocity = Global.Instance.catDriftSpeed * drift;
-            localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
         }
 
         if (localCatEvadeCooldown <= 0.0f)
         {
             evadeFlag = false;
             localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+            Debug.Log("Stop Evading");
         }
+
+        if (catDriftTimer >= catDriftChance && evadeFlag == false)
+        {
+            DriftDirection();
+            Debug.Log("Drift direction changed");
+        }
+        
     }
 
     public void Move(string direction)
@@ -162,20 +169,20 @@ public class Cat : MonoBehaviour
         }
     }
 
-    void Evade(Collider2D collision)
+    void Evade(Collider2D collider)
     {
-        Collider2D[] results;
-        ContactFilter2D resultsFilter;
-        collision.OverlapCollider(resultsFilter, results);
-        if (results[1] == null)
-        {
-
-        }
-        Vector3 away = gameObject.transform.position - collision.gameObject.transform.position;
-        drift.x = away.x;
-        drift.y = away.y;
+        Debug.Log(gameObject + "Evading");
+        drift = gameObject.transform.position - collider.gameObject.transform.position;
         drift = Vector3.ClampMagnitude(drift, 1.0f);
         catRB.velocity = drift * Global.Instance.catEvadeSpeed;
+    }
+
+    void MoveAway(Collision2D collision)
+    {
+        Vector2 contactPoint = collision.GetContact(0).point;
+        Vector3 localAway = new Vector3(contactPoint.x, contactPoint.y, 0.0f);
+        drift = gameObject.transform.position - localAway;
+
     }
 
     void CatCought(Collision2D collision)
@@ -190,12 +197,24 @@ public class Cat : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        CatCought(collision);
+        if(collision.gameObject.layer == 10)
+        {
+            CatCought(collision);
+        }
+        else
+        {
+            MoveAway(collision);
+        }
+        
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collider)
     {
-        evadeFlag = true;
-        Evade(collision);
+        Debug.Log("Trigger fired on " + collider.gameObject);
+        if (collider.gameObject.tag == "Player")
+        {
+            evadeFlag = true;
+            Evade(collider);
+        }
     }
 }

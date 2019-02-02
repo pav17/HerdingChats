@@ -28,7 +28,8 @@ public class Global : MonoBehaviour
     public float catMoveTimeMin = 1.0f;
     public float catEvadeSpeed = 7.0f;
     public float catDriftSpeed = 2.0f;
-    public float catEvadeCooldown = 1.0f;
+    public float catEvadeCooldown = 0.5f;
+    public int catRayNumber = 8;
 
     //Toggles
     public bool streamerMode = true;
