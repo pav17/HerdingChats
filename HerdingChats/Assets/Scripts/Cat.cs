@@ -18,7 +18,7 @@ public class Cat : MonoBehaviour
     private string catMoveDirection;
     private Vector3 drift;
     private bool evadeFlag;
-    private float localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+    private float localCatEvadeCooldown; 
 
 
     void Start()
@@ -28,6 +28,7 @@ public class Cat : MonoBehaviour
         catMoveDirectionChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         catMoveChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         catDriftChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
+        localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
         drift = Vector3.zero;
         DriftDirection();
     }
@@ -46,28 +47,31 @@ public class Cat : MonoBehaviour
             }
         }
 
-        if(evadeFlag == true)
-        {
-            catRB.velocity = Global.Instance.catEvadeSpeed * drift;
-        }
-        else
-        {
-            catRB.velocity = Global.Instance.catDriftSpeed * drift;
-            localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
-        }
-
-        if(localCatEvadeCooldown <= 0.0f)
-        {
-            localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
-            evadeFlag = false;
-        }
-
         if (catDriftTimer >= catDriftChance && evadeFlag == false)
         {
             DriftDirection();
             Debug.Log("Drift direction changed");
         }
         
+    }
+
+    void FixedUpdate()
+    {
+        if (evadeFlag == true)
+        {
+            catRB.velocity = Global.Instance.catEvadeSpeed * drift;
+        }
+        else if(evadeFlag == false)
+        {
+            catRB.velocity = Global.Instance.catDriftSpeed * drift;
+            localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
+        }
+
+        if (localCatEvadeCooldown <= 0.0f)
+        {
+            evadeFlag = false;
+            localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+        }
     }
 
     public void Move(string direction)
@@ -160,6 +164,13 @@ public class Cat : MonoBehaviour
 
     void Evade(Collider2D collision)
     {
+        Collider2D[] results;
+        ContactFilter2D resultsFilter;
+        collision.OverlapCollider(resultsFilter, results);
+        if (results[1] == null)
+        {
+
+        }
         Vector3 away = gameObject.transform.position - collision.gameObject.transform.position;
         drift.x = away.x;
         drift.y = away.y;
