@@ -43,4 +43,12 @@ public class CatMovement : MonoBehaviour
         Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0.0f);
         rb.AddForce(movement);
     }
+
+    void OnCollisonEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Destroy(gameObject);
+        }
+    }
 }
