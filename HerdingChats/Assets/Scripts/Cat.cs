@@ -4,29 +4,70 @@ using UnityEngine;
 
 public class Cat : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    private Rigidbody2D catRB;
     private float moveHorizontal;
     private float moveVertical;
+    private float driftHorizontal;
+    private float driftVertical;
     private float catMoveTimer;
+    private float catDriftTimer;
     private float catMoveChance;
+    private float catDriftChance;
     private float catMoveDirectionChance;
+    private float catDriftDirectionChance;
     private string catMoveDirection;
-    
+    private Vector3 drift;
+    private bool evadeFlag;
+    private float localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+
+
     void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        catRB = gameObject.GetComponent<Rigidbody2D>();
         catMoveTimer = 0.0f;
         catMoveDirectionChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         catMoveChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
+        catDriftChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
+        drift = Vector3.zero;
+        DriftDirection();
     }
 
     void Update()
     {
         catMoveTimer = catMoveTimer + Time.deltaTime;
-        if(catMoveTimer >= catMoveChance)
+        catDriftTimer = catDriftTimer + Time.deltaTime;
+        
+
+        if (Global.Instance.streamerMode == false)
         {
-            MoveDirection();
+            if (catMoveTimer >= catMoveChance)
+            {
+                MoveDirection();
+            }
         }
+
+        if(evadeFlag == true)
+        {
+            catRB.velocity = Global.Instance.catEvadeSpeed * drift;
+        }
+        else
+        {
+            catRB.velocity = Global.Instance.catDriftSpeed * drift;
+            localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
+        }
+
+        if(localCatEvadeCooldown <= 0.0f)
+        {
+            localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+            evadeFlag = false;
+        }
+
+        if (catDriftTimer >= catDriftChance && evadeFlag == false)
+        {
+            DriftDirection();
+            Debug.Log("Drift direction changed");
+        }
+        
     }
 
     public void Move(string direction)
@@ -55,12 +96,39 @@ public class Cat : MonoBehaviour
         }
 
         Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0.0f);
-        rb.AddForce(movement);
+        catRB.AddForce(movement);
     }
 
-    public void Evade()
+    void DriftDirection()
     {
-        //Will make cats avoid player
+        Debug.Log("Cat " + gameObject + " changed drift direction!");
+        //Will cause cats to slowly move around
+        catDriftDirectionChance = Random.Range(1, 100);
+        if (catDriftDirectionChance <= 25)
+        {
+            driftHorizontal = 0.0f;
+            driftVertical = Global.Instance.catDriftSpeed;
+        }
+        else if (catDriftDirectionChance > 25 && catDriftDirectionChance <= 50)
+        {
+            driftHorizontal = 0.0f;
+            driftVertical = -Global.Instance.catDriftSpeed;
+        }
+        else if (catDriftDirectionChance > 50 && catDriftDirectionChance <= 75)
+        {
+            driftHorizontal = -Global.Instance.catDriftSpeed;
+            driftVertical = 0.0f;
+        }
+        else if (catDriftDirectionChance > 75 && catDriftDirectionChance <= 100)
+        {
+            driftHorizontal = Global.Instance.catDriftSpeed;
+            driftVertical = 0.0f;
+        }
+        drift.x = driftHorizontal;
+        drift.y = driftVertical;
+        drift = Vector3.ClampMagnitude(drift, 1.0f);
+        catRB.velocity = drift * Global.Instance.catDriftSpeed;
+        catDriftTimer = 0.0f;
     }
 
     void MoveDirection()
@@ -90,14 +158,33 @@ public class Cat : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void Evade(Collider2D collision)
     {
-        Debug.Log("Collision");
+        Vector3 away = gameObject.transform.position - collision.gameObject.transform.position;
+        drift.x = away.x;
+        drift.y = away.y;
+        drift = Vector3.ClampMagnitude(drift, 1.0f);
+        catRB.velocity = drift * Global.Instance.catEvadeSpeed;
+    }
+
+    void CatCought(Collision2D collision)
+    {
         if (collision.gameObject.CompareTag("Player") == true)
         {
             Global.Instance.catsCought = Global.Instance.catsCought + 1;
             Debug.Log(Global.Instance.catsCought);
             Destroy(gameObject);
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        CatCought(collision);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        evadeFlag = true;
+        Evade(collision);
     }
 }
