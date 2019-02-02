@@ -40,6 +40,10 @@ public class TwitchClient : MonoBehaviour
         {
             catController.ChatMoveCommand(e.Command.CommandText);
         }
+        else
+        {
+            client.SendMessage(client.JoinedChannels[0],"Command not recognized, please use !Help to get the list of commands.");
+        }
     }
 
     private void ChatListen(object sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)
@@ -51,14 +55,5 @@ public class TwitchClient : MonoBehaviour
     private void Help()
     {
         client.SendMessage(client.JoinedChannels[0], "Welcome to Herding Chats! You can use chat commands to help the cats avoid the player! The valid commands are: !Up, !Down, !Left, !Right");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            client.SendMessage(client.JoinedChannels[0], "Hello World");
-        }
     }
 }
