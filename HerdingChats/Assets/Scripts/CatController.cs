@@ -17,6 +17,6 @@ public class CatController : MonoBehaviour
         Debug.Log(cats[0]);
         selectedCat = cats[r];
         Debug.Log(cats[r]);
-        selectedCat.GetComponent<CatMovement>().Move(direction);
+        selectedCat.GetComponent<Cat>().Move(direction);
     }
 }
