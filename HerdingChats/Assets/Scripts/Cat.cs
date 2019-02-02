@@ -20,9 +20,7 @@ public class Cat : MonoBehaviour
     private Vector3 away;
     private bool evadeFlag;
     private float localCatEvadeCooldown;
-    private Collider2D[] results;
-    private ContactFilter2D resultsFilter;
-    private LayerMask catMask;
+
 
 
     void Start()
@@ -35,10 +33,6 @@ public class Cat : MonoBehaviour
         localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
         drift = Vector3.zero;
         away = Vector3.zero;
-        results = new Collider2D[5];
-        catMask = gameObject.layer;
-        resultsFilter.SetLayerMask(catMask);
-        //CreateRays();
         DriftDirection();
     }
 
