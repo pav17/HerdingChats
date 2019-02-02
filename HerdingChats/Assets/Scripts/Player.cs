@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Rigidbody playerRB;
+    private Rigidbody2D playerRB;
 
     // Start is called before the first frame update
     void Start()
     {
-        playerRB = GetComponent<Rigidbody>();
+        playerRB = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame

@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Cat : MonoBehaviour
 {
-    private Rigidbody rb;
+    private Rigidbody2D rb;
     private float moveHorizontal;
     private float moveVertical;
     
     void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody>();
+        rb = gameObject.GetComponent<Rigidbody2D>();
     }
     
     public void Move(string direction)
@@ -42,11 +42,13 @@ public class Cat : MonoBehaviour
         rb.AddForce(movement);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Collision");
         if (collision.gameObject.CompareTag("Player") == true)
         {
-            Global.Instance.catsCought = Global.Instance.catsCought ++;
+            Global.Instance.catsCought = Global.Instance.catsCought + 1;
+            Debug.Log(Global.Instance.catsCought);
             Destroy(gameObject);
         }
     }
