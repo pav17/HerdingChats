@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     private Rigidbody playerRB;
 
@@ -15,13 +15,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float moveHorizotal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-
-        Vector3 movement = new Vector3(moveHorizotal, moveVertical, 0.0f);
+        Vector3 movement = Vector3.zero;
+        movement.x = Input.GetAxis("Horizontal");
+        movement.y = Input.GetAxis("Vertical");
+        movement = Vector3.ClampMagnitude(movement, 1.0f);
         playerRB.velocity = movement * Global.Instance.playerSpeed;
-        //create Global
-
     }
 
 }

@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CatMovement : MonoBehaviour
+public class Cat : MonoBehaviour
 {
     private Rigidbody rb;
     private float moveHorizontal;
     private float moveVertical;
-    private float moveForce;
     
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-        moveForce = 300.0f;
     }
     
     public void Move(string direction)
@@ -22,21 +20,21 @@ public class CatMovement : MonoBehaviour
         if(direction == "Up" || direction == "up")
         {
             moveHorizontal = 0.0f;
-            moveVertical = moveForce;
+            moveVertical = Global.Instance.catMoveForce;
         }
         else if (direction == "Down" || direction == "down")
         {
             moveHorizontal = 0.0f;
-            moveVertical = -moveForce;
+            moveVertical = -Global.Instance.catMoveForce;
         }
         else if (direction == "Left" || direction == "left")
         {
-            moveHorizontal = -moveForce;
+            moveHorizontal = -Global.Instance.catMoveForce;
             moveVertical = 0.0f;
         }
         else if (direction == "Right" || direction == "right")
         {
-            moveHorizontal = moveForce;
+            moveHorizontal = Global.Instance.catMoveForce;
             moveVertical = 0.0f;
         }
 
@@ -44,10 +42,11 @@ public class CatMovement : MonoBehaviour
         rb.AddForce(movement);
     }
 
-    void OnCollisonEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") == true)
         {
+            Global.Instance.catsCought = Global.Instance.catsCought ++;
             Destroy(gameObject);
         }
     }

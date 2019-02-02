@@ -20,5 +20,11 @@ public class Global : MonoBehaviour
         }
     }
 
-    public float playerSpeed;
+
+    //Tweakables
+    public float playerSpeed = 5.0f;
+    public float catMoveForce = 300.0f;
+
+    //Counters
+    public int catsCought = 0;
 }
