@@ -25,6 +25,7 @@ public class TwitchClient : MonoBehaviour
         client.OnChatCommandReceived += CommandListen;
 
         client.Connect();
+        client.SendMessage(client.JoinedChannels[0], "MrTwitchBoto has joined chat");
 
         catController = CatControllerObject.GetComponent<CatController>();
     }
