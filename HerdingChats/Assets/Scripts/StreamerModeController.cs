@@ -9,7 +9,7 @@ public class StreamerModeController : MonoBehaviour
 
     void Start()
     {
-        streamerModeButtontext.text = "Streamer Mode: OFF";
+        streamerModeButtontext.text = "Streamer Mode: ON";
     }
 
     
