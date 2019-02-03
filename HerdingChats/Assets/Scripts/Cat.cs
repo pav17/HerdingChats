@@ -55,10 +55,10 @@ public class Cat : MonoBehaviour
             catRB.velocity = Global.Instance.catEvadeSpeed * drift;
             localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
         }
-        else if (evadeFlag == false)
+        /*else if (evadeFlag == false)
         {
             catRB.velocity = Global.Instance.catDriftSpeed * drift;
-        }
+        }*/
 
         if (localCatEvadeCooldown <= 0.0f)
         {
@@ -112,27 +112,32 @@ public class Cat : MonoBehaviour
         if (catDriftDirectionChance <= 25)
         {
             driftHorizontal = 0.0f;
-            driftVertical = Global.Instance.catDriftSpeed;
+            //driftVertical = Global.Instance.catDriftSpeed;
+            driftVertical = Global.Instance.catMoveForce;
         }
         else if (catDriftDirectionChance > 25 && catDriftDirectionChance <= 50)
         {
             driftHorizontal = 0.0f;
-            driftVertical = -Global.Instance.catDriftSpeed;
+            //driftVertical = -Global.Instance.catDriftSpeed;
+            driftVertical = Global.Instance.catMoveForce;
         }
         else if (catDriftDirectionChance > 50 && catDriftDirectionChance <= 75)
         {
-            driftHorizontal = -Global.Instance.catDriftSpeed;
+            //driftHorizontal = -Global.Instance.catDriftSpeed;
+            driftHorizontal = Global.Instance.catMoveForce;
             driftVertical = 0.0f;
         }
         else if (catDriftDirectionChance > 75 && catDriftDirectionChance <= 100)
         {
-            driftHorizontal = Global.Instance.catDriftSpeed;
+            //driftHorizontal = Global.Instance.catDriftSpeed;
+            driftHorizontal = Global.Instance.catMoveForce;
             driftVertical = 0.0f;
         }
         drift.x = driftHorizontal;
         drift.y = driftVertical;
-        drift = Vector3.ClampMagnitude(drift, 1.0f);
-        catRB.velocity = drift * Global.Instance.catDriftSpeed;
+        //drift = Vector3.ClampMagnitude(drift, 1.0f);
+        //catRB.velocity = drift * Global.Instance.catDriftSpeed;
+        catRB.AddForce(drift);
         catDriftTimer = 0.0f;
     }
 
