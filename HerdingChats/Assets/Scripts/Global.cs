@@ -29,6 +29,7 @@ public class Global : MonoBehaviour
     public float catEvadeSpeed = 7.0f;
     public float catDriftSpeed = 2.0f;
     public float catEvadeCooldown = 0.5f;
+    public float catPostMoveTimer = 5.0f;
     public int catRayNumber = 8;
 
     //Toggles

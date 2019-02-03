@@ -11,6 +11,7 @@ public class Cat : MonoBehaviour
     private float driftVertical;
     private float catMoveTimer;
     private float catDriftTimer;
+    private float catPostMoveTimer;
     private float catMoveChance;
     private float catDriftChance;
     private float catMoveDirectionChance;
@@ -19,6 +20,7 @@ public class Cat : MonoBehaviour
     private Vector3 drift;
     private Vector3 away;
     private bool evadeFlag;
+    private bool postMoveFlag;
     private float localCatEvadeCooldown;
 
 
@@ -31,6 +33,7 @@ public class Cat : MonoBehaviour
         catMoveChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         catDriftChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
         localCatEvadeCooldown = Global.Instance.catEvadeCooldown;
+        catPostMoveTimer = Global.Instance.catPostMoveTimer;
         drift = Vector3.zero;
         away = Vector3.zero;
         DriftDirection();
@@ -55,10 +58,20 @@ public class Cat : MonoBehaviour
             catRB.velocity = Global.Instance.catEvadeSpeed * drift;
             localCatEvadeCooldown = localCatEvadeCooldown - Time.deltaTime;
         }
-        /*else if (evadeFlag == false)
+        else if (evadeFlag == false && postMoveFlag == false)
         {
             catRB.velocity = Global.Instance.catDriftSpeed * drift;
-        }*/
+        }
+
+        if (postMoveFlag == true)
+        {
+            catPostMoveTimer = catPostMoveTimer - Time.deltaTime;
+            if (catPostMoveTimer <= 0.0f)
+            {
+                postMoveFlag = false;
+                catPostMoveTimer = Global.Instance.catPostMoveTimer;
+            }
+        }
 
         if (localCatEvadeCooldown <= 0.0f)
         {
@@ -102,6 +115,7 @@ public class Cat : MonoBehaviour
 
         Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0.0f);
         catRB.AddForce(movement);
+        postMoveFlag = true;
     }
 
     void DriftDirection()
@@ -111,33 +125,33 @@ public class Cat : MonoBehaviour
         catDriftDirectionChance = Random.Range(1, 100);
         if (catDriftDirectionChance <= 25)
         {
-            driftHorizontal = 0.0f;
-            //driftVertical = Global.Instance.catDriftSpeed;
+            //driftHorizontal = 0.0f;
+            driftVertical = Global.Instance.catDriftSpeed;
             driftVertical = Global.Instance.catMoveForce;
         }
         else if (catDriftDirectionChance > 25 && catDriftDirectionChance <= 50)
         {
-            driftHorizontal = 0.0f;
-            //driftVertical = -Global.Instance.catDriftSpeed;
+            //driftHorizontal = 0.0f;
+            driftVertical = -Global.Instance.catDriftSpeed;
             driftVertical = Global.Instance.catMoveForce;
         }
         else if (catDriftDirectionChance > 50 && catDriftDirectionChance <= 75)
         {
-            //driftHorizontal = -Global.Instance.catDriftSpeed;
-            driftHorizontal = Global.Instance.catMoveForce;
+            driftHorizontal = -Global.Instance.catDriftSpeed;
+            //driftHorizontal = Global.Instance.catMoveForce;
             driftVertical = 0.0f;
         }
         else if (catDriftDirectionChance > 75 && catDriftDirectionChance <= 100)
         {
-            //driftHorizontal = Global.Instance.catDriftSpeed;
-            driftHorizontal = Global.Instance.catMoveForce;
+            driftHorizontal = Global.Instance.catDriftSpeed;
+            //driftHorizontal = Global.Instance.catMoveForce;
             driftVertical = 0.0f;
         }
         drift.x = driftHorizontal;
         drift.y = driftVertical;
-        //drift = Vector3.ClampMagnitude(drift, 1.0f);
-        //catRB.velocity = drift * Global.Instance.catDriftSpeed;
-        catRB.AddForce(drift);
+        drift = Vector3.ClampMagnitude(drift, 1.0f);
+        catRB.velocity = drift * Global.Instance.catDriftSpeed;
+        //catRB.AddForce(drift);
         catDriftTimer = 0.0f;
     }
 
@@ -165,6 +179,7 @@ public class Cat : MonoBehaviour
             Move(catMoveDirection);
             catMoveChance = Random.Range(Global.Instance.catMoveTimeMin, Global.Instance.catMoveTimeMax);
             catMoveTimer = 0.0f;
+            postMoveFlag = true;
         }
     }
 
