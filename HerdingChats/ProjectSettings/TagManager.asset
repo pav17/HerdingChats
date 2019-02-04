@@ -18,8 +18,8 @@ TagManager:
   - Cat
   - Player
   - Wall
-  - 
-  - 
+  - Camera
+  - OutsideWall
   - 
   - 
   - 
