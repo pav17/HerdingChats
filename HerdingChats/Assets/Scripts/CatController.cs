@@ -14,9 +14,7 @@ public class CatController : MonoBehaviour
 
         cats = GameObject.FindGameObjectsWithTag("Cat");
         r = Random.Range(0, cats.Length);
-        Debug.Log(cats[0]);
         selectedCat = cats[r];
-        Debug.Log(cats[r]);
         selectedCat.GetComponent<Cat>().Move(direction);
     }
 }
